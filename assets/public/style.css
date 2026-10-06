@@ -1,0 +1,39 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, -apple-system, "Noto Sans TC", sans-serif;
+  color: #28322c;
+  background: #f7f5ef;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  box-sizing: border-box;
+  max-width: 48rem;
+  min-height: 100dvh;
+  margin: 0 auto;
+  padding: clamp(3rem, 12vw, 8rem) 1.5rem;
+}
+
+.eyebrow {
+  margin: 0 0 1.5rem;
+  color: #65766a;
+  font-size: 0.875rem;
+  letter-spacing: 0.12em;
+}
+
+h1 {
+  max-width: 12ch;
+  margin: 0 0 1.5rem;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 600;
+  line-height: 1.12;
+}
+
+main > p:last-child {
+  max-width: 32rem;
+  font-size: 1.125rem;
+  line-height: 1.7;
+}

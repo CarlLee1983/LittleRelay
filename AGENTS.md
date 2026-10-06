@@ -1,23 +1,29 @@
 # Repository Guidelines
 
-This workspace has no source files, build configuration, tests, or Git history yet. Update this guide alongside the first implementation so its paths and commands reflect the actual project.
+## Structure
 
-## Project Structure & Module Organization
+- `src/public.ts` and `src/owner.ts`: separate Cloudflare Worker entry points.
+- `assets/public/`: the anonymous empty-store page.
+- `migrations/`: versioned D1 schema changes.
+- `config/store.example.json`: synthetic, non-secret store configuration.
+- `scripts/generate-config.mjs`: validates a local store configuration and generates Wrangler files and identity SQL.
+- `tests/`: Node.js tests using Cloudflare's local Workers test harness.
+- `.scratch/`: planning, specification, and ticket documents.
 
-Keep application code, tests, and static assets in clearly named directories. Prefer `src/` for application code, `tests/` for tests, and `assets/` for images or other static files when those directories are introduced. Group related code by feature or responsibility, and place tests close to the behavior they verify or mirror the source layout under `tests/`.
+## Commands
 
-## Build, Test, and Development Commands
+- `npm ci`: install locked development dependencies.
+- `npm run config:generate`: read ignored `store.local.json`, generate ignored `.generated/` files.
+- `npm run dev:public` / `npm run dev:owner`: run the selected test Worker locally after generating config. Direct local URLs fail the expected-Host guard; use the integration tests for HTTP verification.
+- `npm run lint`: Biome check of source, scripts, tests, and configuration.
+- `npm run typecheck`: TypeScript check without emission.
+- `npm test`: generate synthetic test config, run local Worker and D1 integration tests.
+- `npm run check`: lint, typecheck, and tests.
 
-No build, run, lint, or test commands are defined yet. When adding a toolchain, provide repeatable commands in its standard configuration file and document them here. For example, list `npm run dev`, `npm test`, and `npm run build` only after those scripts exist, with a short explanation of what each runs.
+## Style and tests
 
-## Coding Style & Naming Conventions
+Use TypeScript for Workers, ECMAScript modules for Node scripts/tests, and Biome formatting. Keep tests at the lowest useful boundary; use the local Worker harness for HTTP, assets, and D1 behavior. Do not put secrets or actual store configuration in version control.
 
-No language or formatter has been selected. Follow the conventions of the chosen language and add formatter and linter configuration with the first source files. Use descriptive names, keep naming consistent within each module, and let the configured formatter determine indentation rather than formatting files by hand.
+## Commits and pull requests
 
-## Testing Guidelines
-
-No test framework or coverage target is established. Add tests for new behavior and regressions when a stable test surface exists. Name tests for the behavior they check, and document the exact command for running the full suite once it is available.
-
-## Commit & Pull Request Guidelines
-
-There is no Git history from which to infer a commit convention. Use short, imperative commit subjects that describe the change. Pull requests should explain the purpose, summarize meaningful changes, identify related issues, and report the checks run. Include screenshots for visible interface changes.
+Use short imperative commit subjects. PRs should explain the purpose, relevant ticket, checks run, and screenshots for visible UI changes. Preserve unrelated work and seek authorization before commit, push, merge, publish, or deploy.
