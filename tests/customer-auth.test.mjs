@@ -98,6 +98,12 @@ test("LINE callback creates one pending application and repeat login preserves i
     );
     const authorize = new URL(first.headers.get("Location"));
     assert.equal(authorize.origin, "https://access.line.me");
+    const formAction = privacy.headers
+      .get("Content-Security-Policy")
+      ?.split(";")
+      .map((directive) => directive.trim())
+      .find((directive) => directive.startsWith("form-action "));
+    assert.equal(formAction, `form-action 'self' ${authorize.origin}`);
     assert.equal(authorize.searchParams.get("client_id"), "2000000001");
     assert.equal(authorize.searchParams.get("scope"), "profile openid");
     assert.equal(authorize.searchParams.get("code_challenge_method"), "S256");

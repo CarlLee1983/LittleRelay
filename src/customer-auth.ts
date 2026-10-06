@@ -128,7 +128,17 @@ async function privacyPage(env: CustomerAuthEnv): Promise<Response> {
         ? "<p>登入尚未開放。</p>"
         : `<form method="post" action="/auth/line/start"><input type="hidden" name="noticeVersion" value="${notice.version}"><button type="submit">閱讀後以 LINE 登入</button></form>`;
     const body = `<pre>${escapeHtml(notice.body)}</pre>${action}`;
-    return page("個人資料告知", body);
+    return page(
+      "個人資料告知",
+      body,
+      200,
+      env.DEPLOYMENT_ENV === "test"
+        ? {
+            "Content-Security-Policy":
+              "default-src 'none'; form-action 'self' https://access.line.me; base-uri 'none'",
+          }
+        : undefined,
+    );
   } catch {
     return page("告知暫不可用", "<p>目前無法開始登入。</p>", 503);
   }
