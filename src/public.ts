@@ -1,9 +1,7 @@
-interface Env {
+import { type CustomerAuthEnv, handleCustomerRoute } from "./customer-auth";
+
+interface Env extends CustomerAuthEnv {
   ASSETS: Fetcher;
-  DB: D1Database;
-  DEPLOYMENT_ENV: "test" | "production";
-  EXPECTED_HOST: string;
-  STORE_ID: string;
 }
 
 export default {
@@ -13,7 +11,14 @@ export default {
       return new Response("Unknown host", { status: 421 });
     }
 
-    // No dynamic endpoint is enabled until its identity and write guards exist.
+    if (
+      url.pathname === "/privacy" ||
+      url.pathname === "/account" ||
+      url.pathname.startsWith("/auth/line/")
+    ) {
+      return handleCustomerRoute(request, env, url);
+    }
+
     if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/auth/")) {
       return new Response("Unavailable", {
         status: env.DEPLOYMENT_ENV === "production" ? 503 : 404,

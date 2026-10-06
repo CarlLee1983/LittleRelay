@@ -30,7 +30,15 @@ test("empty test store serves public assets without records and denies owner acc
       tables.results
         .map((row) => row.name)
         .filter((name) => !name.startsWith("_") && !name.startsWith("sqlite_")),
-      ["d1_migrations", "deployment_identity"],
+      [
+        "customer_sessions",
+        "customers",
+        "d1_migrations",
+        "deployment_identity",
+        "oauth_attempts",
+        "privacy_current",
+        "privacy_notices",
+      ],
     );
     assert.equal(
       (
@@ -40,6 +48,18 @@ test("empty test store serves public assets without records and denies owner acc
       ).total,
       0,
     );
+    for (const table of [
+      "customers",
+      "customer_sessions",
+      "oauth_attempts",
+      "privacy_notices",
+    ]) {
+      assert.equal(
+        (await db.prepare(`SELECT COUNT(*) AS total FROM ${table}`).first())
+          .total,
+        0,
+      );
+    }
 
     const homepage = await publicWorker.fetch(
       "https://shop.test.example.test/",
@@ -123,6 +143,14 @@ test("production Worker has no operational write path", async () => {
     assert.equal(
       (
         await publicWorker.fetch("https://shop.example.test/api/orders", {
+          method: "POST",
+        })
+      ).status,
+      503,
+    );
+    assert.equal(
+      (
+        await publicWorker.fetch("https://shop.example.test/auth/line/start", {
           method: "POST",
         })
       ).status,

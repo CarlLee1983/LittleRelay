@@ -45,11 +45,13 @@ export function validateStoreConfig(config) {
       "d1DatabaseId",
       "publicR2Bucket",
       "privateR2Bucket",
+      "lineProviderId",
       "lineChannelId",
     ]) {
       const value = field.endsWith("Host")
         ? requireHost(settings[field], `${environment}.${field}`)
         : requireString(settings[field], `${environment}.${field}`);
+      if (field === "lineProviderId") continue;
       const group = field.endsWith("Host")
         ? "host"
         : field.startsWith("d1")
@@ -90,6 +92,12 @@ function workerConfig(config, kind, outputDir) {
         STORE_ID: config.storeId,
         DEPLOYMENT_ENV: environment,
         EXPECTED_HOST: host,
+        ...(kind === "public"
+          ? {
+              LINE_CHANNEL_ID: settings.lineChannelId,
+              LINE_PROVIDER_ID: settings.lineProviderId,
+            }
+          : {}),
       },
       d1_databases: [
         {
@@ -147,11 +155,13 @@ export async function generate(inputPath = input, outputDir = output) {
         test: {
           publicR2Bucket: config.test.publicR2Bucket,
           privateR2Bucket: config.test.privateR2Bucket,
+          lineProviderId: config.test.lineProviderId,
           lineChannelId: config.test.lineChannelId,
         },
         production: {
           publicR2Bucket: config.production.publicR2Bucket,
           privateR2Bucket: config.production.privateR2Bucket,
+          lineProviderId: config.production.lineProviderId,
           lineChannelId: config.production.lineChannelId,
         },
       },
